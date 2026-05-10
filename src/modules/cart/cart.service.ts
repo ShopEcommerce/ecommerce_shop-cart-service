@@ -2,7 +2,6 @@ import { CartRepository, CartItem } from './cart.repository';
 import { BadRequestError } from '@teleshop/common';
 
 export class CartService {
-  
   static async getCart(userId: string) {
     return CartRepository.getCart(userId);
   }
@@ -12,7 +11,7 @@ export class CartService {
 
     const items = await CartRepository.getCart(userId);
 
-    const existingItemIndex = items.findIndex(i => i.variantId === newItem.variantId);
+    const existingItemIndex = items.findIndex((i) => i.variantId === newItem.variantId);
 
     if (existingItemIndex > -1) {
       items[existingItemIndex].quantity += newItem.quantity;
@@ -29,7 +28,7 @@ export class CartService {
     }
 
     const items = await CartRepository.getCart(userId);
-    const itemIndex = items.findIndex(i => i.variantId === variantId);
+    const itemIndex = items.findIndex((i) => i.variantId === variantId);
 
     if (itemIndex === -1) throw new BadRequestError('Product not found in cart');
 
@@ -40,7 +39,7 @@ export class CartService {
 
   static async removeItem(userId: string, variantId: string) {
     const items = await CartRepository.getCart(userId);
-    const updatedItems = items.filter(i => i.variantId !== variantId);
+    const updatedItems = items.filter((i) => i.variantId !== variantId);
     return CartRepository.saveCart(userId, updatedItems);
   }
 

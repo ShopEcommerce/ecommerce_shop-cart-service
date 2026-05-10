@@ -11,22 +11,18 @@ router.use(requireAuthMw);
 
 router.get('/', asyncHandler(CartController.getCart as any));
 
-router.post(
-  '/items', 
-  validateZod(addItemSchema), 
-  asyncHandler(CartController.addItem as any)
-);
+router.post('/items', validateZod(addItemSchema), asyncHandler(CartController.addItem as any));
 
 router.put(
-  '/items/:variantId', 
-  validateZod(updateQuantitySchema), 
-  asyncHandler(CartController.updateQuantity as any)
+  '/items/:variantId',
+  validateZod(updateQuantitySchema),
+  asyncHandler(CartController.updateQuantity as any),
 );
 
 router.delete(
-  '/items/:variantId', 
-  validateZod(removeItemSchema), 
-  asyncHandler(CartController.removeItem as any)
+  '/items/:variantId',
+  validateZod(removeItemSchema),
+  asyncHandler(CartController.removeItem as any),
 );
 
 export { router as cartRouter };

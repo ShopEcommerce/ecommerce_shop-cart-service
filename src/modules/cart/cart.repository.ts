@@ -8,7 +8,7 @@ export interface CartItem {
 
 export class CartRepository {
   // Time To Live: 7 days
-  private static TTL = 7 * 24 * 60 * 60; 
+  private static TTL = 7 * 24 * 60 * 60;
 
   private static getKey(userId: string) {
     return `cart:${userId}`;
@@ -16,7 +16,7 @@ export class CartRepository {
 
   static async getCart(userId: string): Promise<CartItem[]> {
     const data = await redisWrapper.client.get(this.getKey(userId));
-    if (!data) return []; 
+    if (!data) return [];
     return JSON.parse(data);
   }
 
@@ -26,12 +26,7 @@ export class CartRepository {
       return [];
     }
 
-    await redisWrapper.client.set(
-      this.getKey(userId), 
-      JSON.stringify(items), 
-      'EX',
-      this.TTL
-    );
+    await redisWrapper.client.set(this.getKey(userId), JSON.stringify(items), 'EX', this.TTL);
     return items;
   }
 
