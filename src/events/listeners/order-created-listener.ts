@@ -2,6 +2,7 @@ import { Message } from 'amqplib';
 import { BaseListener, QueueGroupNames, Subjects } from '@teleshop/common';
 import { CartService } from '../../modules/cart/cart.service';
 import { redisWrapper } from '../../redis/redis-wrapper';
+import { CartMessages } from '../../helpers/messages';
 import pino from 'pino';
 
 const logger = pino();
@@ -20,6 +21,7 @@ export class OrderCreatedListener extends BaseListener<any> {
       logger.info(
         `[Cart Service] Event ${eventId} has already been processed. Skipping (Idempotent).`,
       );
+      logger.info(CartMessages.MSG_59.message);
       return;
     }
 
@@ -30,5 +32,6 @@ export class OrderCreatedListener extends BaseListener<any> {
     await CartService.clearCart(data.userId);
 
     logger.info(`[Cart Service] Successfully cleaned up user's cart!`);
+    logger.info(CartMessages.MSG_58.message);
   }
 }
