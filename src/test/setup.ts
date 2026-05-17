@@ -15,6 +15,20 @@ jest.mock('@teleshop/common', () => {
   };
 });
 
+jest.mock('../redis/redis-wrapper', () => {
+  return {
+    redisWrapper: {
+      client: {
+        get: jest.fn(),
+        set: jest.fn(),
+        del: jest.fn(),
+        expire: jest.fn(),
+        quit: jest.fn(),
+      },
+    },
+  };
+});
+
 beforeEach(() => {
   jest.clearAllMocks();
 });

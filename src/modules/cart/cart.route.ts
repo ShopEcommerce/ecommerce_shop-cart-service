@@ -25,4 +25,6 @@ router.delete(
   asyncHandler(CartController.removeItem as any),
 );
 
+router.delete('/', asyncHandler(CartController.clearCart as any));
+
 export { router as cartRouter };
