@@ -1,5 +1,5 @@
 import { Message } from 'amqplib';
-import { BaseListener, QueueGroupNames, Subjects } from '@teleshop/common';
+import { BaseListener, OrderCreatedEvent, QueueGroupNames, Subjects } from '@teleshop/common';
 import { CartService } from '../../modules/cart/cart.service';
 import { redisWrapper } from '../../redis/redis-wrapper';
 import { CartMessages } from '../../helpers/messages';
@@ -7,12 +7,18 @@ import pino from 'pino';
 
 const logger = pino();
 
-export class OrderCreatedListener extends BaseListener<any> {
-  readonly subject = Subjects.OrderCreated;
+export class OrderCreatedListener extends BaseListener<OrderCreatedEvent> {
+  readonly subject: Subjects.OrderCreated = Subjects.OrderCreated;
   queueGroupName = QueueGroupNames.CartService;
 
-  async onMessage(data: any, _msg: Message) {
-    const eventId = data.id || data.eventId;
+  async onMessage(data: OrderCreatedEvent['data'], _msg: Message) {
+    const eventId = data.id || (data as any).eventId;
+    const userId = data.userId || (data as any).customerId;
+
+    if (!eventId || !userId) {
+      throw new Error('Invalid OrderCreated payload: missing event identifier or user identifier');
+    }
+
     const idempotencyKey = `processed_event:${eventId}`;
 
     const isNew = await redisWrapper.client.set(idempotencyKey, '1', 'EX', 604800, 'NX');
@@ -25,11 +31,9 @@ export class OrderCreatedListener extends BaseListener<any> {
       return;
     }
 
-    logger.info(
-      `[Cart Service] Received order creation event. Cleaning up user's cart: ${data.userId}`,
-    );
+    logger.info(`[Cart Service] Received order creation event. Cleaning up user's cart: ${userId}`);
 
-    await CartService.clearCart(data.userId);
+    await CartService.clearCart(userId);
 
     logger.info(`[Cart Service] Successfully cleaned up user's cart!`);
     logger.info(CartMessages.MSG_58.message);
