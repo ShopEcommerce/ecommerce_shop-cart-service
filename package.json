@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@teleshop/common": "file:../shared/teleshop-common-1.0.3.tgz",
+    "@teleshop/common": "file:../shared/teleshop-common-1.0.4.tgz",
     "amqplib": "^1.0.6",
     "cookie-session": "^2.1.1",
     "cors": "^2.8.6",
